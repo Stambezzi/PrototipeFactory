@@ -2,8 +2,8 @@
 
 class CEmployeeInfo
 {
-public:
-    CEmployeeInfo(const std::string& jobTitle, int experience, int salary) 
+public: 
+    CEmployeeInfo(const std::string& jobTitle, int experience, int salary)
         : fJobTitle( jobTitle ), fYearsOfExperience(experience), fSalary(salary) {}
 
     CEmployeeInfo(const CEmployeeInfo& other)
@@ -78,15 +78,43 @@ private:
     CEmployeeInfo*  fJobInfo;
 };
 
+class CEmployeeFactory
+{
+public:
+    static std::unique_ptr<CEmployee> CreateNewJuniorEmployee(const std::string& name, int salary)
+    {
+        static CEmployee prototypeJunior("", new CEmployeeInfo("Junior Software Developer", 0, salary));
+        std::unique_ptr<CEmployee> newEmpoyee = std::make_unique<CEmployee>(prototypeJunior);
+        newEmpoyee.get()->SetName(name);
+        newEmpoyee.get()->SetSalary(salary);
+        return newEmpoyee;
+    }
+
+    static std::unique_ptr<CEmployee> CreateNewRegularEmployee(const std::string& name, int salary)
+    {
+        static CEmployee prototypeRegular("", new CEmployeeInfo("Software Developer", 5, salary));
+        std::unique_ptr<CEmployee> newEmpoyee = std::make_unique<CEmployee>(prototypeRegular);
+        newEmpoyee.get()->SetName(name);
+        newEmpoyee.get()->SetSalary(salary);
+        return newEmpoyee;
+    }
+
+    static std::unique_ptr<CEmployee> CreateNewSeniorEmployee(const std::string& name, int salary)
+    {
+        static CEmployee prototypeSenior("", new CEmployeeInfo("Senior Software Developer", 10, salary));
+        std::unique_ptr<CEmployee> newEmpoyee = std::make_unique<CEmployee>(prototypeSenior);
+        newEmpoyee.get()->SetName(name);
+        newEmpoyee.get()->SetSalary(salary);
+        return newEmpoyee;
+    }
+};
+
 int main()
 {
-    CEmployee ivan("Ivan", new CEmployeeInfo("Senior Software Developer", 10, 5));
+    std::unique_ptr<CEmployee> ivan = CEmployeeFactory::CreateNewSeniorEmployee("Ivan", 5);
 
-    CEmployee desi(ivan);
-    desi.SetName("Desislava");
-    desi.SetJobTitle("Software developer");
-    desi.SetYearsOfExperience(5);
+    std::unique_ptr<CEmployee>  desi = CEmployeeFactory::CreateNewRegularEmployee("Desislava", 5);
 
-    std::cout << ivan << desi;
+    std::cout << *ivan << *desi;
 }
 
